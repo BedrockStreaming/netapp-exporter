@@ -90,7 +90,7 @@ func getVolumeStatus(client *ssh.Client) {
 
 	lines := strings.Split(outStr, "\r\n")
 
-	for _, line := range lines[2:len(lines)] {
+	for _, line := range lines[2:] {
 		column := regexp.MustCompile(`\s+`).Split(line, -1)
 		if len(column) != 8 {
 			continue
