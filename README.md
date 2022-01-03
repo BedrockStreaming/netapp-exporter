@@ -28,7 +28,7 @@ Usage of netapp-exporter:
   interval: 30                                  # Collect Interval
   username: "XXX"                               # Netapp SSH Username
   password: "XXX"                               # Netapp SSH Password
-  known_hosts_file: "/root/.ssh/known_hosts"        # For SSH Secure Connection
+  known_hosts_file: "/root/.ssh/known_hosts"    # For SSH Secure Connection
 ```
 
 ## Metrics
