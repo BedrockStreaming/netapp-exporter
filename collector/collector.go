@@ -59,9 +59,8 @@ func connectToHost(username string, password string, knownHostsFile string) (*ss
 		Auth:    []ssh.AuthMethod{ssh.Password(password)},
 		Timeout: time.Second * 30,
 	}
-	if knownHostsFile == "" {
-		sshConfig.HostKeyCallback = ssh.InsecureIgnoreHostKey()
-	} else {
+	sshConfig.HostKeyCallback = ssh.InsecureIgnoreHostKey()
+	if knownHostsFile != "" {
 		callback, err := knownhosts.New(knownHostsFile)
 		if err != nil {
 			fmt.Println(err)
