@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bedrock/netapp-exporter/collector"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -9,20 +8,19 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/BedrockStreaming/netapp-exporter/collector"
+
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
-	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
-	Interval int    `yaml:"interval"`
-}
-
-func redirect(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/metrics", 301)
+	Host           string `yaml:"host"`
+	Port           int    `yaml:"port"`
+	Username       string `yaml:"username"`
+	Password       string `yaml:"password"`
+	Interval       int    `yaml:"interval"`
+	KnownHostsFile string `yaml:"known_hosts_file"`
 }
 
 func getConfigs(path string) []*Config {
@@ -50,11 +48,14 @@ func main() {
 	configs := getConfigs(*configFile)
 
 	for _, config := range configs {
-		collector.RecordMetrics(config.Username, config.Password, config.Host, config.Port, config.Interval)
+		collector.RecordMetrics(config.Username, config.Password, config.Host, config.Port, config.Interval, config.KnownHostsFile)
 	}
 
 	fmt.Println("Listening on " + *listenAddress + ":" + fmt.Sprint(*listenPort) + "/metrics")
 	http.Handle("/metrics", promhttp.Handler())
-	http.HandleFunc("/", redirect)
-	http.ListenAndServe(*listenAddress+":"+fmt.Sprint(*listenPort), nil)
+	err := http.ListenAndServe(*listenAddress+":"+fmt.Sprint(*listenPort), nil)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }

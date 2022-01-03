@@ -1,4 +1,4 @@
-module bedrock/netapp-exporter
+module github.com/BedrockStreaming/netapp-exporter
 
 go 1.17
 

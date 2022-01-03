@@ -3,3 +3,4 @@
   interval: 30
   username: "XXX"
   password: "XXX"
+  known_hosts_file: ""
