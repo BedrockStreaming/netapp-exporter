@@ -2,24 +2,26 @@ package collector
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
 	"golang.org/x/crypto/ssh"
+	"golang.org/x/crypto/ssh/knownhosts"
 )
 
 var netappHost string
 var netappPort int
 
-func RecordMetrics(username string, password string, netappH string, netappP int, interval int) {
+func RecordMetrics(username string, password string, netappH string, netappP int, interval int, knownHostsFile string) {
 	netappHost = netappH
 	netappPort = netappP
 
 	go func() {
 		for {
-			client, err := connectToHost(username, password)
+			client, err := connectToHost(username, password, knownHostsFile)
 			if err != nil {
-				fmt.Println(err)
+				log.Println(err)
 				netappNetworkInterfaceStatus.Reset()
 				netappNetworkInterfaceIsHome.Reset()
 				netappNetworkPortLinkStatus.Reset()
@@ -51,13 +53,21 @@ func RecordMetrics(username string, password string, netappH string, netappP int
 	}()
 }
 
-func connectToHost(username string, password string) (*ssh.Client, error) {
+func connectToHost(username string, password string, knownHostsFile string) (*ssh.Client, error) {
 	sshConfig := &ssh.ClientConfig{
 		User:    username,
 		Auth:    []ssh.AuthMethod{ssh.Password(password)},
 		Timeout: time.Second * 30,
 	}
 	sshConfig.HostKeyCallback = ssh.InsecureIgnoreHostKey()
+	if knownHostsFile != "" {
+		callback, err := knownhosts.New(knownHostsFile)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		sshConfig.HostKeyCallback = callback
+		log.Println("Using secure SSH connection with " + knownHostsFile)
+	}
 
 	client, err := ssh.Dial("tcp", netappHost+":"+fmt.Sprint(netappPort), sshConfig)
 	if err != nil {

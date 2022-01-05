@@ -1,7 +1,7 @@
 package collector
 
 import (
-	"fmt"
+	"log"
 	"strings"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -22,13 +22,13 @@ var netappSystemHealth = promauto.NewGaugeVec(
 func getSystemHealth(client *ssh.Client) {
 	session, err := client.NewSession()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappSystemHealth.Reset()
 		return
 	}
 	out, err := session.CombinedOutput("system health status show")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappSystemHealth.Reset()
 		return
 	}

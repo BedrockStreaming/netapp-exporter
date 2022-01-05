@@ -1,7 +1,7 @@
 package collector
 
 import (
-	"fmt"
+	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -75,16 +75,13 @@ var netappStorageAggregateUsableSize = promauto.NewGaugeVec(
 func getStorageDiskErrors(client *ssh.Client) {
 	session, err := client.NewSession()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappStorageDiskError.Reset()
 		return
 	}
-	out, err := session.CombinedOutput("storage disk error show")
-	if err != nil {
-		fmt.Println(err)
-		netappStorageDiskError.Reset()
-		return
-	}
+	// return an error if no disk error (empty message == error lol)
+	// so we don't handle error here
+	out, _ := session.CombinedOutput("storage disk error show")
 	if len(string(out)) > 34 {
 		netappStorageDiskError.WithLabelValues(netappHost).Set(1)
 	} else {
@@ -95,7 +92,7 @@ func getStorageDiskErrors(client *ssh.Client) {
 func getStorageAggregateStatus(client *ssh.Client) {
 	session, err := client.NewSession()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappStorageAggregateStatus.Reset()
 		netappStorageAggregateUsableSize.Reset()
 		netappStorageAggregatePhysicalSize.Reset()
@@ -103,7 +100,7 @@ func getStorageAggregateStatus(client *ssh.Client) {
 	}
 	out, err := session.CombinedOutput("storage aggregate show-status")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappStorageAggregateStatus.Reset()
 		netappStorageAggregateStatus.Reset()
 		netappStorageAggregateUsableSize.Reset()

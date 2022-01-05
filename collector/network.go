@@ -1,7 +1,7 @@
 package collector
 
 import (
-	"fmt"
+	"log"
 	"regexp"
 	"strings"
 
@@ -73,14 +73,14 @@ var netappNetworkPortHealth = promauto.NewGaugeVec(
 func getNetworkInterfaceStatus(client *ssh.Client) {
 	session, err := client.NewSession()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappNetworkInterfaceStatus.Reset()
 		netappNetworkInterfaceIsHome.Reset()
 		return
 	}
 	out, err := session.CombinedOutput("network interface show")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappNetworkInterfaceStatus.Reset()
 		netappNetworkInterfaceIsHome.Reset()
 		return
@@ -89,7 +89,7 @@ func getNetworkInterfaceStatus(client *ssh.Client) {
 
 	lines := strings.Split(outStr, "\r\n")
 	vserver := ""
-	for _, split := range lines[3:len(lines)] {
+	for _, split := range lines[3:] {
 		var reg = regexp.MustCompile(`^(\S+)$`)
 		line := reg.FindAllString(split, -1)
 
@@ -121,14 +121,14 @@ func getNetworkInterfaceStatus(client *ssh.Client) {
 func getNetworkPortStatus(client *ssh.Client) {
 	session, err := client.NewSession()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappNetworkPortLinkStatus.Reset()
 		netappNetworkPortHealth.Reset()
 		return
 	}
 	out, err := session.CombinedOutput("network port show")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappNetworkPortLinkStatus.Reset()
 		netappNetworkPortHealth.Reset()
 		return
@@ -139,7 +139,7 @@ func getNetworkPortStatus(client *ssh.Client) {
 	for _, node := range nodes[1:3] {
 		lines := strings.Split(node, "\r\n")
 		nodeName := lines[0][1:len(lines[0])]
-		for _, line := range lines[4:len(lines)] {
+		for _, line := range lines[4:] {
 			column := regexp.MustCompile(`\s+`).Split(line, -1)
 			if len(column) < 7 {
 				continue
