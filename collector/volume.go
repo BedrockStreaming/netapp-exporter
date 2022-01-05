@@ -1,7 +1,7 @@
 package collector
 
 import (
-	"fmt"
+	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -70,7 +70,7 @@ var netappVolumeTotalSize = promauto.NewGaugeVec(
 func getVolumeStatus(client *ssh.Client) {
 	session, err := client.NewSession()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappVolumeStatus.Reset()
 		netappVolumeUsedSize.Reset()
 		netappVolumeAvailableSize.Reset()
@@ -79,7 +79,7 @@ func getVolumeStatus(client *ssh.Client) {
 	}
 	out, err := session.CombinedOutput("volume show")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappVolumeStatus.Reset()
 		netappVolumeUsedSize.Reset()
 		netappVolumeAvailableSize.Reset()

@@ -51,11 +51,10 @@ func main() {
 		collector.RecordMetrics(config.Username, config.Password, config.Host, config.Port, config.Interval, config.KnownHostsFile)
 	}
 
-	fmt.Println("Listening on " + *listenAddress + ":" + fmt.Sprint(*listenPort) + "/metrics")
+	log.Println("Listening on " + *listenAddress + ":" + fmt.Sprint(*listenPort) + "/metrics")
 	http.Handle("/metrics", promhttp.Handler())
 	err := http.ListenAndServe(*listenAddress+":"+fmt.Sprint(*listenPort), nil)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatalln(err)
 	}
 }

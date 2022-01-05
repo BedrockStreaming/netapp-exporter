@@ -1,7 +1,7 @@
 package collector
 
 import (
-	"fmt"
+	"log"
 	"regexp"
 	"strings"
 
@@ -73,14 +73,14 @@ var netappNetworkPortHealth = promauto.NewGaugeVec(
 func getNetworkInterfaceStatus(client *ssh.Client) {
 	session, err := client.NewSession()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappNetworkInterfaceStatus.Reset()
 		netappNetworkInterfaceIsHome.Reset()
 		return
 	}
 	out, err := session.CombinedOutput("network interface show")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappNetworkInterfaceStatus.Reset()
 		netappNetworkInterfaceIsHome.Reset()
 		return
@@ -121,14 +121,14 @@ func getNetworkInterfaceStatus(client *ssh.Client) {
 func getNetworkPortStatus(client *ssh.Client) {
 	session, err := client.NewSession()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappNetworkPortLinkStatus.Reset()
 		netappNetworkPortHealth.Reset()
 		return
 	}
 	out, err := session.CombinedOutput("network port show")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappNetworkPortLinkStatus.Reset()
 		netappNetworkPortHealth.Reset()
 		return

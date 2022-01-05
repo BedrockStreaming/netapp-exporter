@@ -2,7 +2,7 @@ package collector
 
 import (
 	"fmt"
-	"os"
+	"log"
 	"strings"
 	"time"
 
@@ -21,7 +21,7 @@ func RecordMetrics(username string, password string, netappH string, netappP int
 		for {
 			client, err := connectToHost(username, password, knownHostsFile)
 			if err != nil {
-				fmt.Println(err)
+				log.Println(err)
 				netappNetworkInterfaceStatus.Reset()
 				netappNetworkInterfaceIsHome.Reset()
 				netappNetworkPortLinkStatus.Reset()
@@ -63,10 +63,10 @@ func connectToHost(username string, password string, knownHostsFile string) (*ss
 	if knownHostsFile != "" {
 		callback, err := knownhosts.New(knownHostsFile)
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatalln(err)
 		}
 		sshConfig.HostKeyCallback = callback
+		log.Println("Using secure SSH connection with " + knownHostsFile)
 	}
 
 	client, err := ssh.Dial("tcp", netappHost+":"+fmt.Sprint(netappPort), sshConfig)

@@ -1,7 +1,7 @@
 package collector
 
 import (
-	"fmt"
+	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -75,7 +75,7 @@ var netappStorageAggregateUsableSize = promauto.NewGaugeVec(
 func getStorageDiskErrors(client *ssh.Client) {
 	session, err := client.NewSession()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappStorageDiskError.Reset()
 		return
 	}
@@ -92,7 +92,7 @@ func getStorageDiskErrors(client *ssh.Client) {
 func getStorageAggregateStatus(client *ssh.Client) {
 	session, err := client.NewSession()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappStorageAggregateStatus.Reset()
 		netappStorageAggregateUsableSize.Reset()
 		netappStorageAggregatePhysicalSize.Reset()
@@ -100,7 +100,7 @@ func getStorageAggregateStatus(client *ssh.Client) {
 	}
 	out, err := session.CombinedOutput("storage aggregate show-status")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappStorageAggregateStatus.Reset()
 		netappStorageAggregateStatus.Reset()
 		netappStorageAggregateUsableSize.Reset()

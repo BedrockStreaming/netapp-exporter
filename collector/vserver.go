@@ -1,7 +1,7 @@
 package collector
 
 import (
-	"fmt"
+	"log"
 	"regexp"
 	"strings"
 
@@ -26,13 +26,13 @@ var netappVServerStatus = promauto.NewGaugeVec(
 func getVServerStatus(client *ssh.Client) {
 	session, err := client.NewSession()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappVServerStatus.Reset()
 		return
 	}
 	out, err := session.CombinedOutput("vserver show")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		netappVServerStatus.Reset()
 		return
 	}
