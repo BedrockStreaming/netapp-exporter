@@ -79,12 +79,9 @@ func getStorageDiskErrors(client *ssh.Client) {
 		netappStorageDiskError.Reset()
 		return
 	}
-	out, err := session.CombinedOutput("storage disk error show")
-	if err != nil {
-		fmt.Println(err)
-		netappStorageDiskError.Reset()
-		return
-	}
+	// return an error if no disk error (empty message == error lol)
+	// so we don't handle error here
+	out, _ := session.CombinedOutput("storage disk error show")
 	if len(string(out)) > 34 {
 		netappStorageDiskError.WithLabelValues(netappHost).Set(1)
 	} else {
