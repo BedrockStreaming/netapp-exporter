@@ -23,7 +23,7 @@ var netappVServerStatus = promauto.NewGaugeVec(
 	},
 )
 
-func getVServerStatus(client *ssh.Client) {
+func getVServerStatus(client *ssh.Client, netappHost string) {
 	session, err := client.NewSession()
 	if err != nil {
 		log.Println(err)

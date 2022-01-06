@@ -23,16 +23,10 @@ var netappSecureSSH = promauto.NewGaugeVec(
 	},
 )
 
-var netappHost string
-var netappPort int
-
 func RecordMetrics(username string, password string, netappH string, netappP int, interval int, knownHostsFile string) {
-	netappHost = netappH
-	netappPort = netappP
-
 	go func() {
 		for {
-			client, err := connectToHost(username, password, knownHostsFile)
+			client, err := connectToHost(username, password, netappH, netappP, knownHostsFile)
 			if err != nil {
 				log.Println(err)
 				netappNetworkInterfaceStatus.Reset()
@@ -53,20 +47,20 @@ func RecordMetrics(username string, password string, netappH string, netappP int
 				time.Sleep(10 * time.Second)
 				continue
 			}
-			getNetworkInterfaceStatus(client)
-			getNetworkPortStatus(client)
-			getStorageDiskErrors(client)
-			getStorageAggregateStatus(client)
-			getSystemHealth(client)
-			getVolumeStatus(client)
-			getVServerStatus(client)
+			getNetworkInterfaceStatus(client, netappH)
+			getNetworkPortStatus(client, netappH)
+			getStorageDiskErrors(client, netappH)
+			getStorageAggregateStatus(client, netappH)
+			getSystemHealth(client, netappH)
+			getVolumeStatus(client, netappH)
+			getVServerStatus(client, netappH)
 			client.Close()
 			time.Sleep(time.Duration(interval) * time.Second)
 		}
 	}()
 }
 
-func connectToHost(username string, password string, knownHostsFile string) (*ssh.Client, error) {
+func connectToHost(username string, password string, netappHost string, netappPort int, knownHostsFile string) (*ssh.Client, error) {
 	sshConfig := &ssh.ClientConfig{
 		User:    username,
 		Auth:    []ssh.AuthMethod{ssh.Password(password)},

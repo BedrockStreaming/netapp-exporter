@@ -67,7 +67,7 @@ var netappVolumeTotalSize = promauto.NewGaugeVec(
 	},
 )
 
-func getVolumeStatus(client *ssh.Client) {
+func getVolumeStatus(client *ssh.Client, netappHost string) {
 	session, err := client.NewSession()
 	if err != nil {
 		log.Println(err)

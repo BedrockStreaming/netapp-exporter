@@ -70,7 +70,7 @@ var netappNetworkPortHealth = promauto.NewGaugeVec(
 	},
 )
 
-func getNetworkInterfaceStatus(client *ssh.Client) {
+func getNetworkInterfaceStatus(client *ssh.Client, netappHost string) {
 	session, err := client.NewSession()
 	if err != nil {
 		log.Println(err)
@@ -118,7 +118,7 @@ func getNetworkInterfaceStatus(client *ssh.Client) {
 	}
 }
 
-func getNetworkPortStatus(client *ssh.Client) {
+func getNetworkPortStatus(client *ssh.Client, netappHost string) {
 	session, err := client.NewSession()
 	if err != nil {
 		log.Println(err)

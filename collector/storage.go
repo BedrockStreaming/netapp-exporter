@@ -72,7 +72,7 @@ var netappStorageAggregateUsableSize = promauto.NewGaugeVec(
 	},
 )
 
-func getStorageDiskErrors(client *ssh.Client) {
+func getStorageDiskErrors(client *ssh.Client, netappHost string) {
 	session, err := client.NewSession()
 	if err != nil {
 		log.Println(err)
@@ -89,7 +89,7 @@ func getStorageDiskErrors(client *ssh.Client) {
 	}
 }
 
-func getStorageAggregateStatus(client *ssh.Client) {
+func getStorageAggregateStatus(client *ssh.Client, netappHost string) {
 	session, err := client.NewSession()
 	if err != nil {
 		log.Println(err)

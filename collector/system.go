@@ -19,7 +19,7 @@ var netappSystemHealth = promauto.NewGaugeVec(
 	},
 )
 
-func getSystemHealth(client *ssh.Client) {
+func getSystemHealth(client *ssh.Client, netappHost string) {
 	session, err := client.NewSession()
 	if err != nil {
 		log.Println(err)
