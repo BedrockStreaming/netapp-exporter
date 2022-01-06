@@ -6,8 +6,21 @@ import (
 	"strings"
 	"time"
 
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/knownhosts"
+)
+
+var netappSecureSSH = promauto.NewGaugeVec(
+	prometheus.GaugeOpts{
+		Name: "netapp_secure_ssh",
+		Help: "Is secure ssh enabled ?",
+	},
+	[]string{
+		"host",
+		"file",
+	},
 )
 
 var netappHost string
@@ -60,13 +73,14 @@ func connectToHost(username string, password string, knownHostsFile string) (*ss
 		Timeout: time.Second * 30,
 	}
 	sshConfig.HostKeyCallback = ssh.InsecureIgnoreHostKey()
+	netappSecureSSH.WithLabelValues(netappHost, knownHostsFile).Set(0)
 	if knownHostsFile != "" {
 		callback, err := knownhosts.New(knownHostsFile)
 		if err != nil {
 			log.Fatalln(err)
 		}
 		sshConfig.HostKeyCallback = callback
-		log.Println("Using secure SSH connection with " + knownHostsFile)
+		netappSecureSSH.WithLabelValues(netappHost, knownHostsFile).Set(1)
 	}
 
 	client, err := ssh.Dial("tcp", netappHost+":"+fmt.Sprint(netappPort), sshConfig)

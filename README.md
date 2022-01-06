@@ -31,8 +31,6 @@ Usage of netapp-exporter:
   known_hosts_file: "/root/.ssh/known_hosts"    # For Secure SSH Connection
 ```
 
-You can validate that `Secure SSH Connection` is enabled with a log at startup : `Using secure SSH connection with <known_hosts_file>`.
-
 ## Metrics
 
 Ontap | Metrics
@@ -46,3 +44,7 @@ Ontap | Metrics
 `vserver show` | `netapp_vserver_status`
 
 [More about ONTAP commands](https://docs.netapp.com/ontap-9/topic/com.netapp.doc.dot-cm-cmpr-910/home.html)
+
+### Additionnal metrics
+
+`netapp_secure_ssh` : to know if secure ssh is enabled or not
