@@ -37,29 +37,20 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	hostExists := false
 	for _, config := range config {
 		if target == config.Host {
-			//hostExists = true
+			hostExists = true
 			break
 		}
 	}
 	if !hostExists {
-		http.Error(w, "this target does not exist in config", 400)
+		http.Error(w, string(target + " target does not exist in config"), 400)
 		return
 	}
 
-
-
-	// logger = log.With(logger, "target", target)
-	// level.Debug(logger).Log("msg", "Starting scrape")
-
-	// start := time.Now()
 	registry := prometheus.NewRegistry()
-	//c := collector.New(r.Context(), target, logger)
-	//registry.MustRegister(c)
-	// Delegate http serving to Prometheus client library, which will call collector.Collect.
+
 	h := promhttp.HandlerFor(registry, promhttp.HandlerOpts{})
 	h.ServeHTTP(w, r)
-	// duration := time.Since(start).Seconds()
-	// level.Debug(logger).Log("msg", "Finished scrape", "duration_seconds", duration)
+
 }
 
 func main() {
