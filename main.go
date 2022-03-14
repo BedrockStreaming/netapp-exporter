@@ -88,8 +88,8 @@ func main() {
 		log.Println("Listening on " + *listenAddress + ":" + fmt.Sprint(*listenPort) + "/netapp")
 		handler(w, r)
 	})
-	//err := http.ListenAndServe(*listenAddress+":"+fmt.Sprint(*listenPort), nil)
-	// if err != nil {
-	// 	log.Fatalln(err)
-	// }
+	err = http.ListenAndServe(*listenAddress+":"+fmt.Sprint(*listenPort), nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
