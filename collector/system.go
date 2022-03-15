@@ -26,6 +26,7 @@ func getSystemHealth(client *ssh.Client, netappHost string) {
 		netappSystemHealth.Reset()
 		return
 	}
+	defer session.Close()
 	out, err := session.CombinedOutput("system health status show")
 	if err != nil {
 		log.Println(err)

@@ -23,6 +23,16 @@ var netappSecureSSH = promauto.NewGaugeVec(
 	},
 )
 
+var netappUp = promauto.NewGaugeVec(
+	prometheus.GaugeOpts{
+		Name: "netapp_up",
+		Help: "Is host up ?",
+	},
+	[]string{
+		"host",
+	},
+)
+
 func RecordMetrics(username string, password string, netappH string, netappP int, interval int, knownHostsFile string) {
 	go func() {
 		for {
@@ -44,9 +54,19 @@ func RecordMetrics(username string, password string, netappH string, netappP int
 				netappVolumeAvailableSize.Reset()
 				netappVolumeTotalSize.Reset()
 				netappVServerStatus.Reset()
+				netappUp.WithLabelValues(netappH).Set(0)
 				time.Sleep(10 * time.Second)
 				continue
 			}
+			session, err := client.NewSession()
+			if err != nil {
+				log.Println(err)
+				netappUp.WithLabelValues(netappH).Set(0)
+				time.Sleep(10 * time.Second)
+				continue
+			}
+			session.Close()
+			netappUp.WithLabelValues(netappH).Set(1)
 			getNetworkInterfaceStatus(client, netappH)
 			getNetworkPortStatus(client, netappH)
 			getStorageDiskErrors(client, netappH)

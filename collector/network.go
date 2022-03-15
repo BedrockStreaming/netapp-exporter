@@ -78,6 +78,7 @@ func getNetworkInterfaceStatus(client *ssh.Client, netappHost string) {
 		netappNetworkInterfaceIsHome.Reset()
 		return
 	}
+	defer session.Close()
 	out, err := session.CombinedOutput("network interface show")
 	if err != nil {
 		log.Println(err)
@@ -126,6 +127,7 @@ func getNetworkPortStatus(client *ssh.Client, netappHost string) {
 		netappNetworkPortHealth.Reset()
 		return
 	}
+	defer session.Close()
 	out, err := session.CombinedOutput("network port show")
 	if err != nil {
 		log.Println(err)
