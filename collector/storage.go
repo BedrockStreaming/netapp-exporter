@@ -79,6 +79,7 @@ func getStorageDiskErrors(client *ssh.Client, netappHost string) {
 		netappStorageDiskError.Reset()
 		return
 	}
+	defer session.Close()
 	// return an error if no disk error (empty message == error lol)
 	// so we don't handle error here
 	out, _ := session.CombinedOutput("storage disk error show")
@@ -98,6 +99,7 @@ func getStorageAggregateStatus(client *ssh.Client, netappHost string) {
 		netappStorageAggregatePhysicalSize.Reset()
 		return
 	}
+	defer session.Close()
 	out, err := session.CombinedOutput("storage aggregate show-status")
 	if err != nil {
 		log.Println(err)

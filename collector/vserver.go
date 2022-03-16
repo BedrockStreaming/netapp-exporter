@@ -30,6 +30,7 @@ func getVServerStatus(client *ssh.Client, netappHost string) {
 		netappVServerStatus.Reset()
 		return
 	}
+	defer session.Close()
 	out, err := session.CombinedOutput("vserver show")
 	if err != nil {
 		log.Println(err)

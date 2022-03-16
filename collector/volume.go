@@ -77,6 +77,7 @@ func getVolumeStatus(client *ssh.Client, netappHost string) {
 		netappVolumeTotalSize.Reset()
 		return
 	}
+	defer session.Close()
 	out, err := session.CombinedOutput("volume show")
 	if err != nil {
 		log.Println(err)
