@@ -48,3 +48,4 @@ Ontap | Metrics
 ### Additionnal metrics
 
 `netapp_secure_ssh` : to know if secure ssh is enabled or not
+`netapp_up` : to know if ssh connection succeeded
